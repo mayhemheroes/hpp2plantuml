@@ -1,0 +1,8 @@
+project: hpp2plantuml
+target: fuzz-hpp
+testsuite:
+    - file://mayhem/testsuite
+
+cmds:
+  - cmd: /src/mayhem/fuzz_hpp.py
+    libfuzzer: true
