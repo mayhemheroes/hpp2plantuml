@@ -1,4 +1,6 @@
 #!/usr/bin/env python3
+from re import error
+
 import atheris
 import sys
 import io
@@ -7,7 +9,6 @@ from contextlib import contextmanager
 from CppHeaderParser import CppParseError
 
 import fuzz_helpers
-
 
 with atheris.instrument_imports():
     import hpp2plantuml
@@ -35,12 +36,13 @@ def TestOneInput(data):
             with nostdout():
                 obj_d = hpp2plantuml.Diagram(flag_dep=fdp.ConsumeBool())
                 obj_d.create_from_string(fdp.ConsumeRemainingString())
-    except (CppParseError, UnicodeDecodeError):
+    except (CppParseError, UnicodeDecodeError, error):
         return -1
     except (TypeError, AssertionError):
         if ctr > 1000:
             raise
         return -1
+
 
 def main():
     atheris.Setup(sys.argv, TestOneInput)
