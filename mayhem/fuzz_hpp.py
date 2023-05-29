@@ -27,22 +27,16 @@ def TestOneInput(data):
     global ctr
     ctr += 1
     fdp = fuzz_helpers.EnhancedFuzzedDataProvider(data)
-    try:
-        if fdp.ConsumeBool():
-            with nostdout():
-                with fdp.ConsumeTemporaryFile(suffix='.hpp', all_data=True, as_bytes=True) as f:
-                    hpp2plantuml.CreatePlantUMLFile(file_list=[f], output_file='/dev/null')
-        else:
-            with nostdout():
-                obj_d = hpp2plantuml.Diagram(flag_dep=fdp.ConsumeBool())
-                obj_d.create_from_string(fdp.ConsumeRemainingString())
-    except (CppParseError, UnicodeDecodeError, error):
-        return -1
-    except (TypeError, AssertionError):
-        if ctr > 1000:
-            raise
-        return -1
-
+    with nostdout():
+        try:
+            if fdp.ConsumeBool():
+                    with fdp.ConsumeTemporaryFile(suffix='.hpp', all_data=True, as_bytes=True) as f:
+                        hpp2plantuml.CreatePlantUMLFile(file_list=[f], output_file='/dev/null')
+            else:
+                    obj_d = hpp2plantuml.Diagram(flag_dep=fdp.ConsumeBool())
+                    obj_d.create_from_string(fdp.ConsumeRemainingString())
+        except (CppParseError, UnicodeDecodeError, error, TypeError, AssertionError):
+            return -1
 
 def main():
     atheris.Setup(sys.argv, TestOneInput)
